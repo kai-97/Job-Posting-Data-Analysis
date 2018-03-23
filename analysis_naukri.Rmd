@@ -1,0 +1,64 @@
+---
+title: "DWDM Project Analysis"
+output: html_notebook
+---
+
+Members:<br>
+<ol>
+<li>Kaivan Shah</li>
+<li>Navneet Kishan</li>
+</ol>
+
+This is an R notebook containing the analysis of the Job Postings from naukri.com<br>
+Data has been obtained from web scraping and analyzed here.<br>
+Presently contains basic Exploratory analysis techniques and further analysis and models to be built eventually.
+
+```{r}
+#install.packages('Amelia')
+#install.packages("ggplot2")
+#nstall.packages("tidyr")
+library(Amelia)
+library(magrittr)
+
+df<-read.csv("./refined_data.csv", header = TRUE)
+#print(df)
+
+missmap(df)
+```
+Shows the Missing Attributes for a certain row value.
+
+```{r}
+ggplot(data = df, aes(x=org, y=salLow))+geom_bar(stat = "identity")
+```
+
+
+```{r}
+matr<-data.matrix(df, rownames.force = NA)
+#print(matr)
+corr<-cor(matr)
+#matr<-matrix(df$expLow, nrow = 25, ncol = 25)
+print(corr)
+heatmap(as.matrix(corr), scale = "column",Rowv = NA, Colv = NA)
+
+```
+
+```{r}
+matr<-data.matrix(df, rownames.force = NA)
+#print(matr)
+#corr<-cor(matr)
+#matr<-matrix(df$expLow, nrow = 25, ncol = 25)
+matr2<-matrix(c(df$expLow, df$salLow), nrow = 100, ncol = 100)
+corr<-cor(matr2)
+#print(corr)
+heatmap(as.matrix(corr), scale = "column",Rowv = NA, Colv = NA)
+
+```
+
+k means here:
+```{r}
+km <- cbind(df$expLow, df$salLow)
+c <- kmeans(km, 13)
+c$cluster
+plot(df$expLow, df$salLow,col=c$cluster)
+points(c$centers, pch=16)
+```
